@@ -63,9 +63,9 @@ django.jQuery(function ($) {
 			startorder = $(dragged_rows.item[0]).find('div.drag').attr('order');
 
 			var search = location.search.substring(1);
-			var queryParams = JSON.parse(
-				'{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'
-			);
+			var queryParams = '{"' + decodeURI(search).replace(
+				/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"'
+			) + '"}';
 
 			$.ajax({
 				url: config.update_url,

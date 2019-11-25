@@ -79,6 +79,7 @@ class SortableAdminBase(object):
 class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     enable_sorting = False
+    enable_admin_filters = False
     action_form = MovePageActionForm
 
     @property
@@ -270,6 +271,16 @@ class SortableAdminMixin(SortableAdminBase):
             filters = {self.default_order_field: startorder}
             filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
+
+            if self.enable_admin_filters:
+                try:
+                    admin_filters = json.loads(request.POST.get('query_params'))
+                except:
+                    pass
+                else:
+                    filters.update(admin_filters)
+                    move_filter.update(admin_filters)
+
             try:
                 obj = self.model.objects.get(**filters)
             except self.model.MultipleObjectsReturned as exc:
