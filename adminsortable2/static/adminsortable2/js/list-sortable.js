@@ -1,6 +1,6 @@
 "use strict";
 
-django.jQuery(function($) {
+django.jQuery(function ($) {
 	// make list view sortable
 	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
@@ -18,8 +18,7 @@ django.jQuery(function($) {
 
 	try {
 		var config = JSON.parse($("#admin_sortable2_config").text());
-	}
-	catch (parse_error) {
+	} catch (parse_error) {
 		return;  // configuration not initialized by change_list.html
 	}
 
@@ -63,6 +62,11 @@ django.jQuery(function($) {
 			}
 			startorder = $(dragged_rows.item[0]).find('div.drag').attr('order');
 
+			var search = location.search.substring(1);
+			var queryParams = JSON.parse(
+				'{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'
+			);
+
 			$.ajax({
 				url: config.update_url,
 				type: 'POST',
@@ -70,7 +74,8 @@ django.jQuery(function($) {
 					o: ordering,
 					startorder: startorder,
 					endorder: endorder,
-					csrfmiddlewaretoken: csrfvalue
+					csrfmiddlewaretoken: csrfvalue,
+					query_params: queryParams
 				},
 				success: function (moved_items) {
 					$.each(moved_items, function (index, item) {
@@ -89,14 +94,13 @@ django.jQuery(function($) {
 });
 
 // Show and hide the step input field
-django.jQuery(function($) {
+django.jQuery(function ($) {
 	var $step_field = $('#changelist-form-step');
 	var $page_field = $('#changelist-form-page');
 
 	try {
 		var config = JSON.parse($("#admin_sortable2_config").text());
-	}
-	catch (parse_error) {
+	} catch (parse_error) {
 		return;  // configuration not initialized by change_list.html
 	}
 
