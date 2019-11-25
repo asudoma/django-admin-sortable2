@@ -323,7 +323,13 @@ class SortableAdminMixin(SortableAdminBase):
         return {}
 
     def get_max_order(self, request, obj=None):
-        max_order = self.model.objects.aggregate(
+        filters = {}
+        if self.enable_admin_filters and '_changelist_filters' in request.GET:
+            _splitted = request.GET.get('_changelist_filters', '')
+            for item in _splitted.split('&'):
+                key, value = item.split('=')
+                filters[key] = value
+        max_order = self.model.objects.filter(**filters).aggregate(
             max_order=Max(self.default_order_field)
         )['max_order'] or 0
         return max_order
